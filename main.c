@@ -27,6 +27,7 @@ int main(){
     bigInt *num2 = bigIntStrToArr(str2);
     bigInt *num3 = bigIntSub(num1, num2);
     bigInt *num4 = bigIntAdd(num1, num2);
+    bigInt *num5 = bigIntDiv(num1, num2);
 
     printf("Num1: ");
     bigIntPrint(num1);
@@ -36,4 +37,6 @@ int main(){
     bigIntPrint(num3);
     printf("Add: ");
     bigIntPrint(num4);
+    printf("Division: ");
+    bigIntPrint(num5);
 }

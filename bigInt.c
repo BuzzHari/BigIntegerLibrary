@@ -220,6 +220,59 @@ bigInt* bigIntAdd(bigInt* num1, bigInt* num2)
     return result;
 }
 
+
+int iszero(bigInt* num)
+{
+	for(int i=0; i<num->len; i++)
+	{
+		if(num->num[i] != 0)
+			return 0;
+	}
+	return 1;
+}
+
+
+
+bigInt* bigIntDiv(bigInt* num1, bigInt* num2)
+{
+
+	bigInt*  result = (bigInt*)malloc(sizeof(bigInt)*1);
+	result->num = (char *) calloc(num1->len, sizeof(char));
+	result->len = 0;
+
+    bigInt* unity = (bigInt*)malloc(sizeof(bigInt)*1);
+    unity->num = (char *)calloc(1, sizeof(char));
+    unity->num[0] = 1;
+    unity->len = 1;
+
+	if(num1->num == NULL || num2->num == NULL)
+	{
+		return (bigInt*)NULL;
+	}
+	if(iszero(num1) == 1)
+	{
+		printf("Division is 0\n");
+		result->num[0] = 0;
+		result->len = 1;
+		return result;
+	}
+
+    if(iszero(num2) == 1)
+    {
+        printf("Division by zero is INF\n");
+        return (bigInt*)NULL;
+    }
+
+    while(bigIntCompare(num1, num2) != -1)
+	{
+		num1 = bigIntSub(num1, num2);
+		result = bigIntAdd(result, unity);
+	}
+
+	return result;
+}
+
+
 /*
  *Karatsuba implementation
  *bigInt* bigIntFastMul(bigInt* num1, bigInt* num2){

@@ -249,9 +249,9 @@ bigInt* bigIntDiv(bigInt* num1, bigInt* num2)
 	{
 		return (bigInt*)NULL;
 	}
-	if(iszero(num1) == 1)
+	if((iszero(num1) == 1) || (bigIntCompare(num1, num2) == -1))
 	{
-		printf("Division is 0\n");
+		// printf("Division is 0\n");
 		result->num[0] = 0;
 		result->len = 1;
 		return result;

@@ -109,6 +109,7 @@ bigInt* bigIntPow(bigInt*, bigInt*);
 
 //Try to add some more functionalities..
 
-
-
+bigInt* bigMulsmall(bigInt* num1, int num2 );
+int iszero(bigInt* num);
+bigInt* addZeroPadding_end(bigInt *num, long long int offset);
 

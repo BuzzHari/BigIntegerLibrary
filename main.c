@@ -28,6 +28,7 @@ int main(){
     bigInt *num3 = bigIntSub(num1, num2);
     bigInt *num4 = bigIntAdd(num1, num2);
     bigInt *num5 = bigIntDiv(num1, num2);
+    bigInt *num6 = bigIntMul(num1, num2);
 
     printf("Num1: ");
     bigIntPrint(num1);
@@ -39,4 +40,6 @@ int main(){
     bigIntPrint(num4);
     printf("Division: ");
     bigIntPrint(num5);
+    printf("Multiplication: ");
+    bigIntPrint(num6);
 }

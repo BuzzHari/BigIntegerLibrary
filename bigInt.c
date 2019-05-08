@@ -22,6 +22,9 @@ bigInt* bigIntStrToArr(const char *str){
     for(i = 0; i < newNum->len; i++){
         newNum->num[i] = str[i] - '0';
     }
+
+    //to remove the uncessary zeros if present.
+    removeZeroPadding(newNum);
     return newNum;
 }
 
@@ -104,13 +107,30 @@ int bigIntCompare(bigInt *num1, bigInt *num2){
     return 0;
 }
 
+bigInt* bigIntIncrement(bigInt *num){
+    if( num == NULL){
+        printf("bigIntIncrement:Nan\n");
+        return NULL;
+    }
+
+    bigInt* unity = (bigInt*)malloc(sizeof(bigInt)*1);
+    unity->num = (char *)calloc(1, sizeof(char));
+    unity->num[0] = 1;
+    unity->len = 1;
+
+    bigInt *temp = bigIntAdd(num,unity);
+    
+    free(num);
+    
+    num = temp;
+    free(unity);
+    return num;
+}
+
 bigInt* bigIntSub(bigInt *num1, bigInt *num2){
     if(num1 == NULL || num2 == NULL)
         return NULL;
     
-    //to remove the uncessary zeros if present.
-    removeZeroPadding(num1);
-    removeZeroPadding(num2);
     
     long long int len = MAX(num1->len, num2->len);
     bigInt *result = (bigInt*) malloc(sizeof(bigInt)*1);
@@ -173,9 +193,6 @@ bigInt* bigIntAdd(bigInt* num1, bigInt* num2)
     if(num1 == NULL || num2 == NULL)
         return NULL;
     
-    //to remove the uncessary zeros if present.
-    removeZeroPadding(num1);
-    removeZeroPadding(num2);
     
     char *bignum, *smallnum;
     bigInt *result = (bigInt*) malloc(sizeof(bigInt)*1);
@@ -232,7 +249,7 @@ int iszero(bigInt* num)
 }
 
 
-
+//Divides num1/num2
 bigInt* bigIntDiv(bigInt* num1, bigInt* num2)
 {
 
@@ -240,36 +257,82 @@ bigInt* bigIntDiv(bigInt* num1, bigInt* num2)
 	result->num = (char *) calloc(num1->len, sizeof(char));
 	result->len = 0;
 
-    bigInt* unity = (bigInt*)malloc(sizeof(bigInt)*1);
-    unity->num = (char *)calloc(1, sizeof(char));
-    unity->num[0] = 1;
-    unity->len = 1;
+    /*
+     *bigInt* unity = (bigInt*)malloc(sizeof(bigInt)*1);
+     *unity->num = (char *)calloc(1, sizeof(char));
+     *unity->num[0] = 1;
+     *unity->len = 1;
+     */
 
-	if(num1->num == NULL || num2->num == NULL)
-	{
+	if(num1->num == NULL || num2->num == NULL){
+        printf("bigIntDiv: NaN\n");
 		return (bigInt*)NULL;
 	}
-	if((iszero(num1) == 1) || (bigIntCompare(num1, num2) == -1))
-	{
+	
+    if((iszero(num1) == 1) || (bigIntCompare(num1, num2) == -1)){
 		// printf("Division is 0\n");
 		result->num[0] = 0;
 		result->len = 1;
 		return result;
 	}
 
-    if(iszero(num2) == 1)
-    {
+    if(iszero(num2) == 1){
         printf("Division by zero is INF\n");
         return (bigInt*)NULL;
     }
+    
+    /*
+     *char *bignum, *smallnum, p_flag = -1;
+     *long long int len = 0;
+     *if(num1->len > num2->len){
+     *    addZeroPadding(num2,num1->len - num2->len);
+     *    p_flag = 2;
+     *    bignum = num1->num;
+     *    smallnum = num2->num;
+     *    len = num1->len;
+     *}
+     *else if(num1->len < num2->len){
+     *    addZeroPadding(num1, num2->len - num1->len);
+     *    p_flag = 1;
+     *    bignum = num2->num;
+     *    smallnum = num1->num;
+     *    len = num2->len;
+     *}
+     *else{
+     *    bignum = num1->num;
+     *    smallnum = num2->num;
+     *    len = num1->len;
+     *}
+     */
+    
+    
+    bigInt *copy = (bigInt*) malloc(sizeof(bigInt)*1);
+    copy->num = (char*) malloc(sizeof(char)*num1->len);
+    copy->len = num1->len; 
+    
+    //creating a copy of bignum;
+    for(long long int i = 0; i < num1->len; i++)
+        copy->num[i] = num1->num[i];
+    
+    bigInt *temp = copy;
 
-    while(bigIntCompare(num1, num2) != -1)
-	{
-		num1 = bigIntSub(num1, num2);
-		result = bigIntAdd(result, unity);
+    //run while loop while num1 > num2
+    int count = 0;
+    bigIntPrint(copy);
+    while(bigIntCompare(copy, num2) != -1){
+        printf("...wait..");
+		temp = bigIntSub(copy, num2);
+        
+        free(copy);
+        copy = temp;
+        
+        result = bigIntIncrement(result);
+        count+=1;
+		//result = bigIntAdd(result, unity);
 	}
-
-	return result;
+    printf("\n");
+    removeZeroPadding(result);	
+    return result;
 }
 
 

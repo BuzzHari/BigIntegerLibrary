@@ -91,7 +91,7 @@ bigInt* executeKaratsuba(bigInt*, bigInt*, long long int);
  */
 
 
-void bigIntIncrement(bigInt *bigInt);
+bigInt* bigIntIncrement(bigInt *bigInt);
 bigInt* bigIntAdd(bigInt*, bigInt*);
 
 //Do simple long multiplication.. 

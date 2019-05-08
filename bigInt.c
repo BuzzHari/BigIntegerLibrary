@@ -46,6 +46,32 @@ void addZeroPadding(bigInt *num, long long int offset){
     num->len = newLen;
 }
 
+bigInt* addZeroPadding_end(bigInt *num, long long int offset){
+    long long int newLen = num->len + offset;
+    // char *tempNum = (char*) malloc(sizeof(char)*(newLen));
+
+    bigInt *result = (bigInt*) malloc(sizeof(bigInt)*1);
+    result->len = newLen;
+    result->num = (char *) calloc(newLen, sizeof(char)); 
+
+    long long int i = 0;
+    // printf("Entering first while loop\n");
+    // printf("num->len is %lld\n", num->len);
+    while(i < num->len)
+    {
+        result->num[i] = num->num[i];
+        i++;
+    }
+    // int j = 0;
+    // printf("Entering second while loop\n");
+    while(i < newLen){
+        result->num[i] = 0;
+        i++;
+    }
+
+    return result;
+}
+
 void removeZeroPadding(bigInt *num){
     long long int i = 0;
     char *tempNum;
@@ -335,6 +361,69 @@ bigInt* bigIntDiv(bigInt* num1, bigInt* num2)
     return result;
 }
 
+
+bigInt* bigMulsmall(bigInt* num1, int num2 )
+{
+	bigInt* result = (bigInt*)malloc(sizeof(bigInt*));
+    result->len = num1->len + 1;
+    result->num = (char*)calloc((num1->len)+1, sizeof(char));
+
+	const int size = num1->len;
+
+	int i, prod = 0;
+	for ( i = size - 1; i >= 0; i-- )
+	{
+		prod = num1->num[i] * num2 + prod / 10;
+		result->num[i + 1] = prod % 10;
+	}
+	result->num[++i] = prod / 10;
+
+	removeZeroPadding(result);
+
+	return result;
+}
+
+
+bigInt* bigIntMul(bigInt* num1, bigInt* num2)
+{
+    long int len = num1->len;
+    if(num2->len > num1->len)
+        len = num2->len;
+
+    bigInt* temp = (bigInt*)malloc(sizeof(bigInt));
+    temp->num = (char*)calloc(len, sizeof(char));
+    temp->len = 1;
+    
+	if (num2->len > num1->len)
+	{
+		// swap num1 and num2
+        temp = num1;
+        num1 = num2;
+        num2 = temp;
+	}
+
+	bigInt* result = (bigInt*)malloc(sizeof(bigInt));
+    result->num = (char*)calloc(2*len, sizeof(char));
+    result->len = 0;
+
+	const int size = num2->len;
+	int i = size - 1;
+    // printf("Entering while loop\n");
+	while ( i >= 0 )
+	{
+        temp = addZeroPadding_end(bigMulsmall(num1, num2->num[i]), size-i-1);
+        // printf("Padding complete: ");
+        // bigIntPrint(temp);
+		result = bigIntAdd(result, temp);
+        // printf("result: ");
+        // bigIntPrint(result);
+		i--;
+	}
+
+	removeZeroPadding(result);
+
+	return result;
+}
 
 /*
  *Karatsuba implementation

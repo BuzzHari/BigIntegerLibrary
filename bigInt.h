@@ -84,7 +84,10 @@ int bigIntCompare(bigInt*, bigInt*);
 bigInt* bigIntSub(bigInt*, bigInt*);
 
 bigInt* bigIntFastMul(bigInt*, bigInt*);
-bigInt* executeKaratsuba(bigInt*, bigInt*, long long int);
+bigInt* executeKaratsuba(bigInt*, bigInt*);
+bigInt* getFirstHalf(bigInt*);
+bigInt* getSecondHalf(bigInt*);
+void deallocate(bigInt*);
 
 /*
  * FOR YOU TO IMPLEMENT.
@@ -110,5 +113,5 @@ bigInt* bigIntPow(bigInt*, bigInt*);
 
 bigInt* bigMulsmall(bigInt* num1, int num2 );
 int iszero(bigInt* num);
-bigInt* addZeroPadding_end(bigInt *num, long long int offset);
+void  addZeroPaddingEnd(bigInt *num, long long int offset);
 

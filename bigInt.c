@@ -47,31 +47,29 @@ void addZeroPadding(bigInt *num, long long int offset){
     num->len = newLen;
 }
 
-/*bigInt* addZeroPadding_end(bigInt *num, long long int offset){
+void deallocate(bigInt *num){
+    if(num == NULL){
+        printf("deallocate: NaN\n");
+        return;
+    }
+
+    free(num->num);
+    free(num);
+}
+
+void addZeroPaddingEnd(bigInt *num, long long int offset){
     long long int newLen = num->len + offset;
-    // char *tempNum = (char*) malloc(sizeof(char)*(newLen));
+    
+    num->num = (char*)realloc(num->num, sizeof(char)*newLen);
 
-    bigInt *result = (bigInt*) malloc(sizeof(bigInt)*1);
-    result->len = newLen;
-    result->num = (char *) calloc(newLen, sizeof(char)); 
-
-    long long int i = 0;
-    // printf("Entering first while loop\n");
-    // printf("num->len is %lld\n", num->len);
-    while(i < num->len)
-    {
-        result->num[i] = num->num[i];
-        i++;
-    }
-    // int j = 0;
-    // printf("Entering second while loop\n");
+    long long int i = num->len ;
     while(i < newLen){
-        result->num[i] = 0;
-        i++;
+        num->num[i++] = 0;
     }
+    
+    num->len = newLen;
 
-    return result;
-}*/
+}
 
 void removeZeroPadding(bigInt *num){
     long long int i = 0;
@@ -99,6 +97,7 @@ void removeZeroPadding(bigInt *num){
     free(num->num);
     num->num = tempNum;
 }
+
 
 void bigIntPrint(bigInt *num){
     if(num == NULL){
@@ -132,6 +131,44 @@ int bigIntCompare(bigInt *num1, bigInt *num2){
     }
 
     return 0;
+}
+
+bigInt* getFirstHalf(bigInt *num){
+    if(num == NULL){
+        printf("getFirstHalf: NaN\n");
+        return NULL;
+    }
+
+    bigInt* halfNum = (bigInt*) malloc(sizeof(bigInt)*1);
+    halfNum->num = (char*) malloc(sizeof(char)*(num->len/2));
+    halfNum->len = num->len/2;
+    long long int i = 0;
+    while(i < halfNum->len){
+        halfNum->num[i] = num->num[i];
+        i++;
+    }
+    return halfNum;
+}
+
+
+bigInt* getSecondHalf(bigInt *num){
+    if(num == NULL){
+        printf("getSecondHalf: NaN\n");
+        return NULL;
+    }
+
+    bigInt* halfNum = (bigInt*) malloc(sizeof(bigInt)*1);
+    halfNum->num = (char*) malloc(sizeof(char)*(num->len/2));
+    halfNum->len = num->len/2;
+
+    long long int i = halfNum->len;
+    long long int j = 0;
+    while(i < num->len){
+        halfNum->num[j] = num->num[i];
+        j++;
+        i++;
+    }
+    return halfNum;
 }
 
 bigInt* bigIntIncrement(bigInt *num){
@@ -512,74 +549,109 @@ bigInt* bigIntPow(bigInt* num1, bigInt* num2)
 }
 
 
-/*
- *Karatsuba implementation
- *bigInt* bigIntFastMul(bigInt* num1, bigInt* num2){
- *
- *    if(num1 == NULL || num2 == NULL){
- *        printf("NaN\n");
- *        return NULL;
- *    }
- *    
- *    //Length of both the numbers should be the same.
- *    long long int len = num1->len;
- *    int p_flag = -1;
- *    if(num1->len > num2->len){
- *        addZeroPadding(num2, num1->len - num2->len);
- *        len = num1->len;
- *        p_flag = 2;
- *    }
- *    else if(num1->len < num2->len){
- *        addZeroPadding(num1, num2->len - num2->len);
- *        len = num2->len;
- *        p_flag = 1;
- *    }
- *    
- *    //making sure that length in always even.
- *    if(len%2 != 0){
- *        addZeroPadding(num1, 1);
- *        addZeroPadding(num2, 1);
- *        p_flag = 3;
- *    }
- *
- *    bigInt *result = (bigInt*) malloc(sizeof(bigInt)*1);
- *
- *    result = executeKaratsuba(num1,num2,len);
- *    
- *    if(p_flag == 1)
- *        removeZeroPadding(num1);
- *    else if(p_flag == 2)
- *        removeZeroPadding(num2);
- *    else if(p_flag == 3){
- *        removeZeroPadding(num1);
- *        removeZeroPadding(num2);
- *    }
- *    
- *    return result;
- *}
- */
+//Karatsuba implementation
+bigInt* bigIntFastMul(bigInt* num1, bigInt* num2){
 
-/*
- *bigInt* executeKaratsuba(bigInt *num1, bigInt *num2, long long int len){
- *
- *    if(len == 1)
- *        return bigIntMul(num1, num2);
- *
- *    long long int m = len / 2;
- *    
- *    bigInt *a1 = getFirstHalf(num1, m);
- *    bigInt *a2 = getSecondHalf(num1, m);
- *
- *    bigInt *b1 = getFirstHalf(num2, m);
- *    bigInt *b2 = getSecondHalf(num2, m);
- *
- *    bigInt *p1 = executeKaratsuba(a1, b1, m);
- *    bigInt *p2 = executeKaratsuba(a2, b2, m);
- *    bigInt *sum1 = bigIntAdd(a1, a2);
- *    bigInt *sum2 = bigIntAdd(b1, b2);
- *    
- *    bigInt *p3 = executeKaratsuba(sum1, sum2,
- *
- *
- *}
- */
+    if(num1 == NULL || num2 == NULL){
+        printf("NaN\n");
+        return NULL;
+    }
+    
+    //Length of both the numbers should be the same.
+    long long int len = num1->len;
+    int p_flag = -1;
+    if(num1->len > num2->len){
+        addZeroPadding(num2, num1->len - num2->len);
+        len = num1->len;
+        p_flag = 2;
+    }
+    else if(num1->len < num2->len){
+        addZeroPadding(num1, num2->len - num2->len);
+        len = num2->len;
+        p_flag = 1;
+    }
+    
+    //making sure that length in always even.
+    if(len%2 != 0){
+        addZeroPadding(num1, 1);
+        addZeroPadding(num2, 1);
+        p_flag = 3;
+    }
+
+    bigInt *result = (bigInt*) malloc(sizeof(bigInt)*1);
+
+    result = executeKaratsuba(num1,num2);
+    
+    if(p_flag == 1)
+        removeZeroPadding(num1);
+    else if(p_flag == 2)
+        removeZeroPadding(num2);
+    else if(p_flag == 3){
+        removeZeroPadding(num1);
+        removeZeroPadding(num2);
+    }
+    
+    return result;
+}
+
+bigInt* executeKaratsuba(bigInt *num1, bigInt *num2){
+
+    if(num1->len == 1)
+        return bigIntMul(num1, num2);
+
+    //Making sure that the length of both the
+    //numbers is the same.
+    if(num1->len > num2->len){
+        addZeroPadding(num2, num1->len - num2->len);
+    }
+    else if(num1->len < num2->len){
+        addZeroPadding(num1, num2->len - num2->len);
+    }
+    
+    //Making sure that length of both numbers is even.
+    if(num1->len % 2 != 0){
+        addZeroPadding(num1, 1);
+        addZeroPadding(num2, 1);
+    }
+    
+    long long int m = num1->len / 2;
+    
+    bigInt *a1 = getFirstHalf(num1);
+    bigInt *a2 = getSecondHalf(num1);
+    
+    bigInt *b1 = getFirstHalf(num2);
+    bigInt *b2 = getSecondHalf(num2);
+    
+    
+    bigInt *p1 = executeKaratsuba(a1, b1);
+    bigInt *p2 = executeKaratsuba(a2, b2);
+    bigInt *sum1 = bigIntAdd(a1, a2);
+    bigInt *sum2 = bigIntAdd(b1, b2);
+    bigInt *p3 = executeKaratsuba(sum1, sum2);
+    
+    bigInt *temp;
+    //p4 = p3-p2-p1
+    temp = bigIntSub(p3,p2);
+    bigInt *p4 = bigIntSub(temp, p1);
+
+    deallocate(temp);
+    
+    addZeroPaddingEnd(p1, 2*m);
+    addZeroPaddingEnd(p4, m);
+
+    
+    temp = bigIntAdd(p1, p4);
+    bigInt *p5 = bigIntAdd(temp, p2);
+
+    deallocate(temp);
+    deallocate(a1);
+    deallocate(a2);
+    deallocate(b1);
+    deallocate(b2);
+    deallocate(p1);
+    deallocate(p2);
+    deallocate(p3);
+    deallocate(p4);
+    
+    return p5;
+}

@@ -45,4 +45,10 @@ int main(){
     bigIntPrint(num5);
     printf("Multiplication: ");
     bigIntPrint(num6);
+
+    bigInt *num7 = bigIntPow(num1, num2);
+    printf("Power: ");
+    bigIntPrint(num7);
+
+    return 0;
 }

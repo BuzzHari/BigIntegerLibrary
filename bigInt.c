@@ -447,6 +447,71 @@ bigInt* bigIntMul(bigInt *num1, bigInt *num2){
     return result;
 }
 
+
+bigInt* bigIntPow(bigInt* num1, bigInt* num2)
+{
+    // printf("Power function called\n\n");
+    bigInt* result = (bigInt*)malloc(sizeof(bigInt));
+    bigInt* temp = (bigInt*)malloc(sizeof(bigInt));
+    bigInt* num2_copy = (bigInt*)malloc(sizeof(bigInt));
+    temp->num = (char *)calloc(num1->len + num2->len, sizeof(char));
+
+    // UNITY (probably not matrix reference -_-)
+    bigInt* unity = (bigInt*)malloc(sizeof(bigInt)*1);
+    unity->num = (char *)calloc(1, sizeof(char));
+    unity->num[0] = 1;
+    unity->len = 1;
+
+    temp->len = 0;
+    if(num2->len > num1->len)
+    {
+        temp = num1;
+        num1 = num2;
+        num2 = temp;
+    }
+    num2_copy->len = num2->len;
+    num2_copy->num = (char*)calloc(num2->len, sizeof(char));
+    num2_copy->num = num2->num;
+    int size = num1->len;
+    result->num = (char *)calloc(size+(2*num2->len), sizeof(char));
+	if (iszero(num2))
+	{
+		result->num[0] = 1;
+        result->len = 1;
+        return result;
+	}
+
+    // SOME ALGORITHM I FOUND ONLINE, PROBABLY MORE EFFICIENT BUT I DIDN'T UNDERSTAND IT (line 462 - 473)
+
+	// if ( ( num2[num2.size() - 1] - '0' ) & 1 )
+	// {
+	// 	string temp = BigPow( num1, BigDiv( num2, "2" ) );
+	// 	return BigMul( BigMul( num1, temp ), temp );
+	// }
+	// else
+	// {
+	// 	string temp = BigPow( num1, BigDiv( num2, "2" ) );
+	// 	return BigMul( temp, temp );
+	// }
+
+    result->num = num1->num;
+    result->len = num1->len;
+
+    num2_copy = bigIntSub(num2_copy, unity);
+
+    // printf("Num2_copy before entering the loop: ");
+    // bigIntPrint(num2);
+
+    while(!iszero(num2_copy))
+    {
+        result = bigIntMul(result, num1);
+        num2_copy = bigIntSub(num2_copy, unity);
+        // bigIntPrint(num2_copy);
+    }
+    return result;
+}
+
+
 /*
  *Karatsuba implementation
  *bigInt* bigIntFastMul(bigInt* num1, bigInt* num2){

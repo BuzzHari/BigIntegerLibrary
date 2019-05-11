@@ -42,11 +42,12 @@ void addZeroPadding(bigInt *num, long long int offset){
     }
 
     free(num->num);
+    
     num->num = tempNum;
     num->len = newLen;
 }
 
-bigInt* addZeroPadding_end(bigInt *num, long long int offset){
+/*bigInt* addZeroPadding_end(bigInt *num, long long int offset){
     long long int newLen = num->len + offset;
     // char *tempNum = (char*) malloc(sizeof(char)*(newLen));
 
@@ -70,7 +71,7 @@ bigInt* addZeroPadding_end(bigInt *num, long long int offset){
     }
 
     return result;
-}
+}*/
 
 void removeZeroPadding(bigInt *num){
     long long int i = 0;
@@ -146,9 +147,11 @@ bigInt* bigIntIncrement(bigInt *num){
 
     bigInt *temp = bigIntAdd(num,unity);
     
+    free(num->num);
     free(num);
     
     num = temp;
+    free(unity->num);
     free(unity);
     return num;
 }
@@ -233,8 +236,7 @@ bigInt* bigIntAdd(bigInt* num1, bigInt* num2)
         size = num2->len;
         p_flag = 1;
     }
-    else if(num2->len < num1->len){
-        addZeroPadding(num2,num1->len - num2->len);
+    else if(num2->len < num1->len){ addZeroPadding(num2,num1->len - num2->len);
         smallnum = num2->num;
         bignum = num1->num;
         p_flag = 2;
@@ -307,30 +309,6 @@ bigInt* bigIntDiv(bigInt* num1, bigInt* num2)
         return (bigInt*)NULL;
     }
     
-    /*
-     *char *bignum, *smallnum, p_flag = -1;
-     *long long int len = 0;
-     *if(num1->len > num2->len){
-     *    addZeroPadding(num2,num1->len - num2->len);
-     *    p_flag = 2;
-     *    bignum = num1->num;
-     *    smallnum = num2->num;
-     *    len = num1->len;
-     *}
-     *else if(num1->len < num2->len){
-     *    addZeroPadding(num1, num2->len - num1->len);
-     *    p_flag = 1;
-     *    bignum = num2->num;
-     *    smallnum = num1->num;
-     *    len = num2->len;
-     *}
-     *else{
-     *    bignum = num1->num;
-     *    smallnum = num2->num;
-     *    len = num1->len;
-     *}
-     */
-    
     
     bigInt *copy = (bigInt*) malloc(sizeof(bigInt)*1);
     copy->num = (char*) malloc(sizeof(char)*num1->len);
@@ -344,25 +322,25 @@ bigInt* bigIntDiv(bigInt* num1, bigInt* num2)
 
     //run while loop while num1 > num2
     int count = 0;
-    bigIntPrint(copy);
     while(bigIntCompare(copy, num2) != -1){
-        printf("...wait..");
+        //printf("...wait..");
 		temp = bigIntSub(copy, num2);
         
+        free(copy->num);
         free(copy);
         copy = temp;
         
         result = bigIntIncrement(result);
         count+=1;
+        //printf("%d\n",count);
 		//result = bigIntAdd(result, unity);
 	}
-    printf("\n");
     removeZeroPadding(result);	
     return result;
 }
 
 
-bigInt* bigMulsmall(bigInt* num1, int num2 )
+/*bigInt* bigMulsmall(bigInt* num1, int num2 )
 {
 	bigInt* result = (bigInt*)malloc(sizeof(bigInt*));
     result->len = num1->len + 1;
@@ -381,10 +359,10 @@ bigInt* bigMulsmall(bigInt* num1, int num2 )
 	removeZeroPadding(result);
 
 	return result;
-}
+}*/
 
 
-bigInt* bigIntMul(bigInt* num1, bigInt* num2)
+/*bigInt* bigIntMul(bigInt* num1, bigInt* num2)
 {
     long int len = num1->len;
     if(num2->len > num1->len)
@@ -394,35 +372,79 @@ bigInt* bigIntMul(bigInt* num1, bigInt* num2)
     temp->num = (char*)calloc(len, sizeof(char));
     temp->len = 1;
     
-	if (num2->len > num1->len)
-	{
-		// swap num1 and num2
+    if (num2->len > num1->len)
+    {
+        // swap num1 and num2
         temp = num1;
         num1 = num2;
         num2 = temp;
-	}
+    }
 
-	bigInt* result = (bigInt*)malloc(sizeof(bigInt));
+    bigInt* result = (bigInt*)malloc(sizeof(bigInt));
     result->num = (char*)calloc(2*len, sizeof(char));
     result->len = 0;
 
-	const int size = num2->len;
-	int i = size - 1;
+    const int size = num2->len;
+    int i = size - 1;
     // printf("Entering while loop\n");
-	while ( i >= 0 )
-	{
+    while ( i >= 0 )
+    {
         temp = addZeroPadding_end(bigMulsmall(num1, num2->num[i]), size-i-1);
         // printf("Padding complete: ");
         // bigIntPrint(temp);
-		result = bigIntAdd(result, temp);
+        result = bigIntAdd(result, temp);
         // printf("result: ");
         // bigIntPrint(result);
-		i--;
-	}
+        i--;
+    }
 
-	removeZeroPadding(result);
+    removeZeroPadding(result);
 
-	return result;
+    return result;
+}*/
+
+bigInt* bigIntMul(bigInt *num1, bigInt *num2){
+    if(num1 == NULL || num2 == NULL){
+        printf("bigIntMul: NaN\n");
+        return NULL;
+    }
+
+    char p_flag = -1;
+    long long int len = 0;
+    if(num1->len > num2->len){
+        addZeroPadding(num2,num1->len - num2->len);
+        p_flag = 2;
+        len = num1->len;
+    }
+    else if(num1->len < num2->len){
+        addZeroPadding(num1, num2->len - num1->len);
+        len = num2->len;
+    }
+    else{
+        len = num1->len;
+    }
+
+    bigInt *result = (bigInt*) malloc(sizeof(bigInt)*1);
+    result->num = (char*) calloc(2*len, sizeof(char));
+    result->len = 2*len;
+    
+    char temp  = 0; 
+    char carry = 0; 
+    long long int shift = (2*len)-1;
+    for(long long int i = len - 1; i >= 0; i--){
+        carry = 0;
+        shift = len + i;
+        for(long long int j = len - 1; j >= 0; j--){
+            temp = result->num[shift] + (num1->num[j] * num2->num[i]) + carry ;
+            result->num[shift] = temp % 10;
+            carry = temp / 10;
+            shift-=1;
+        }
+        result->num[shift] = result->num[shift] + carry;
+    }
+    
+    removeZeroPadding(result);
+    return result;
 }
 
 /*

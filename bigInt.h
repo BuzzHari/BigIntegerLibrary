@@ -97,7 +97,6 @@ bigInt* bigIntAdd(bigInt*, bigInt*);
 //Do simple long multiplication.. 
 //call removeZeroPadding before returning the result. 
 bigInt* bigIntMul(bigInt*, bigInt*);
-
 //Basically, I thing we can
 //just implement num1 // num2, by repeated subtraction.
 //Try finding a proper divison algo, because repeated subtraction 

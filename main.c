@@ -10,6 +10,9 @@ int main(){
     char *str1 = (char*) malloc(sizeof(char) * MAX_SIZE);
     char *str2 = (char*) malloc(sizeof(char) * MAX_SIZE);
     
+    //char str1[100] = "119876789992983827672";
+    //char str2[100] = "201";
+
     if(!str1){
         printf("Malloc Error\n");
         exit(0);
@@ -22,7 +25,7 @@ int main(){
     
     scanf("%s", str1);
     scanf("%s", str2);
-    
+     
     bigInt *num1 = bigIntStrToArr(str1);
     bigInt *num2 = bigIntStrToArr(str2);
     bigInt *num3 = bigIntSub(num1, num2);
@@ -38,7 +41,7 @@ int main(){
     bigIntPrint(num3);
     printf("Add: ");
     bigIntPrint(num4);
-    printf("Division: ");
+    printf("Divison: ");
     bigIntPrint(num5);
     printf("Multiplication: ");
     bigIntPrint(num6);

@@ -2,7 +2,7 @@
 #include<stdlib.h>
 #include<time.h>
 
-#define MAX 100000 
+#define MAX 100 
 
 int main(){
 

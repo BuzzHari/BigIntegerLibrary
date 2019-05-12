@@ -28,9 +28,9 @@ int main(){
      
     bigInt *num1 = bigIntStrToArr(str1);
     bigInt *num2 = bigIntStrToArr(str2);
-    /*bigInt *num3 = bigIntSub(num1, num2);
-    bigInt *num4 = bigIntAdd(num1, num2);
-    bigInt *num5 = bigIntDiv(num1, num2);*/
+    //bigInt *num3 = bigIntSub(num1, num2);
+    //bigInt *num4 = bigIntAdd(num1, num2);
+    //bigInt *num5 = bigIntDiv(num1, num2);
     clock_t time1, time2;
     time1 = clock();
     bigInt *num6 = bigIntMul(num1, num2);
@@ -39,22 +39,30 @@ int main(){
     bigInt *num7 = bigIntFastMul(num1, num2);
     time2 = clock() - time2;
 
-    /*printf("Num1: ");
-    bigIntPrint(num1);
-    printf("Num2: ");
-    bigIntPrint(num2);
-    printf("Sub: ");
-    bigIntPrint(num3);
-    printf("Add: ");
-    bigIntPrint(num4);
-    printf("Divison: ");
-    bigIntPrint(num5);*/
+    //printf("Num1: ");
+    //bigIntPrint(num1);
+    //printf("Num2: ");
+    //bigIntPrint(num2);
+    //printf("Sub: ");
+    //bigIntPrint(num3);
+    //printf("Add: ");
+    //bigIntPrint(num4);
+    //printf("Divison: ");
+    //bigIntPrint(num5);
     printf("Product: ");
     bigIntPrint(num6);
     printf("ProductFast: ");
     bigIntPrint(num7);
     printf("Simple Mul time: %f\n", (float)time1/CLOCKS_PER_SEC);
     printf("Karatsuba  time: %f\n", (float)time2/CLOCKS_PER_SEC);
+    
+    free(str1);
+    free(str2);
+    //deallocate(num6);
+    deallocate(num2);
+    deallocate(num1);
+    deallocate(num7);
+    deallocate(num6);
     //bigInt *num7 = bigIntPow(num1, num2);
     //printf("Power: ");
     //bigIntPrint(num7);

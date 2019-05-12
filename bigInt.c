@@ -29,6 +29,10 @@ bigInt* bigIntStrToArr(const char *str){
 }
 
 void addZeroPadding(bigInt *num, long long int offset){
+    if(num == NULL){
+        printf("addZeroPadding: Nan\n");
+        return;
+    }
     long long int newLen = num->len + offset;
     char *tempNum = (char*) malloc(sizeof(char)*(newLen));
     long long int i = 0;
@@ -73,8 +77,8 @@ void addZeroPaddingEnd(bigInt *num, long long int offset){
 
 void removeZeroPadding(bigInt *num){
     long long int i = 0;
-    char *tempNum;
-    while(num->num[i] == 0 && i < num->len)
+    char *tempNum = NULL;
+    while(i < num->len && num->num[i] == 0 )
         i++;
     
     if(i == num->len){
@@ -181,7 +185,7 @@ bigInt* bigIntIncrement(bigInt *num){
     unity->num = (char *)calloc(1, sizeof(char));
     unity->num[0] = 1;
     unity->len = 1;
-
+    
     bigInt *temp = bigIntAdd(num,unity);
     
     free(num->num);
@@ -320,8 +324,7 @@ bigInt* bigIntDiv(bigInt* num1, bigInt* num2)
 
 	bigInt*  result = (bigInt*)malloc(sizeof(bigInt)*1);
 	result->num = (char *) calloc(num1->len, sizeof(char));
-	result->len = 0;
-
+	result->len = 1;
     /*
      *bigInt* unity = (bigInt*)malloc(sizeof(bigInt)*1);
      *unity->num = (char *)calloc(1, sizeof(char));
@@ -363,15 +366,15 @@ bigInt* bigIntDiv(bigInt* num1, bigInt* num2)
         //printf("...wait..");
 		temp = bigIntSub(copy, num2);
         
-        free(copy->num);
-        free(copy);
+        deallocate(copy);
         copy = temp;
-        
+         
         result = bigIntIncrement(result);
         count+=1;
         //printf("%d\n",count);
 		//result = bigIntAdd(result, unity);
 	}
+    deallocate(temp);
     removeZeroPadding(result);	
     return result;
 }
@@ -464,7 +467,6 @@ bigInt* bigIntMul(bigInt *num1, bigInt *num2){
     bigInt *result = (bigInt*) malloc(sizeof(bigInt)*1);
     result->num = (char*) calloc(2*len, sizeof(char));
     result->len = 2*len;
-    
     char temp  = 0; 
     char carry = 0; 
     long long int shift = (2*len)-1;
@@ -578,8 +580,8 @@ bigInt* bigIntFastMul(bigInt* num1, bigInt* num2){
         p_flag = 3;
     }
 
-    bigInt *result = (bigInt*) malloc(sizeof(bigInt)*1);
-
+    //bigInt *result = (bigInt*) malloc(sizeof(bigInt)*1);
+    bigInt *result;
     result = executeKaratsuba(num1,num2);
     
     if(p_flag == 1)
@@ -596,8 +598,9 @@ bigInt* bigIntFastMul(bigInt* num1, bigInt* num2){
 
 bigInt* executeKaratsuba(bigInt *num1, bigInt *num2){
 
-    if(num1->len == 1)
+    if(num1->len == 1){
         return bigIntMul(num1, num2);
+    }
 
     //Making sure that the length of both the
     //numbers is the same.
@@ -648,6 +651,8 @@ bigInt* executeKaratsuba(bigInt *num1, bigInt *num2){
     deallocate(a2);
     deallocate(b1);
     deallocate(b2);
+    deallocate(sum1);
+    deallocate(sum2);
     deallocate(p1);
     deallocate(p2);
     deallocate(p3);
